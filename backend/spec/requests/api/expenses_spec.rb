@@ -14,12 +14,27 @@ RSpec.describe "Api::Expenses", type: :request do
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
       expect(json.length).to eq(2)
+      expect(json.first["category"]).to be_present
     end
 
-    it "returns expenses in descending order by created_at" do
+    it "returns expenses ordered by expense date descending (BUG-001)" do
+      older = Expense.create!(description: "Old rent", amount: 500.00, category: food_category, date: Date.today - 30)
+
       get "/api/expenses"
 
       json = JSON.parse(response.body)
+      dates = json.map { |e| e["date"] }
+      expect(dates).to eq(dates.sort.reverse)
+      # The oldest-dated expense must land at the bottom of the list.
+      expect(json.last["id"]).to eq(older.id)
+    end
+
+    it "breaks ties on the same date by most recently created (BUG-001)" do
+      get "/api/expenses"
+
+      json = JSON.parse(response.body)
+      # expense2 shares expense1's date but was created afterwards, so a newly
+      # added expense still appears at the top of the list.
       expect(json.first["id"]).to eq(expense2.id)
       expect(json.last["id"]).to eq(expense1.id)
     end
