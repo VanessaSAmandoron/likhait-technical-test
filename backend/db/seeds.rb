@@ -111,6 +111,9 @@ expense_templates = {
   ]
 }
 
+# Sample payer names (payer_name is NOT NULL in the schema)
+payer_names = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Lee', 'Emily Chen']
+
 # Start date: January 1, 2024
 # End date: February 18, 2026
 start_date = Date.new(2024, 1, 1)
@@ -145,6 +148,7 @@ while current_date <= end_date
         description: template[:description],
         amount: amount,
         category: category,
+        payer_name: payer_names.sample,
         date: current_date,
         created_at: current_date,
         updated_at: current_date

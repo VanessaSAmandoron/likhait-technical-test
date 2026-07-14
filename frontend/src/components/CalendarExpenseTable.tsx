@@ -18,20 +18,69 @@ interface CalendarExpenseTableProps {
 
 const ITEMS_PER_PAGE = 10;
 
+type SortColumn = "date" | "description" | "category" | "amount";
+type SortDirection = "asc" | "desc";
+
+interface SortState {
+  column: SortColumn;
+  direction: SortDirection;
+}
+
+const SORTABLE_COLUMNS: { key: SortColumn; label: string }[] = [
+  { key: "date", label: "Date" },
+  { key: "description", label: "Description" },
+  { key: "category", label: "Category" },
+  { key: "amount", label: "Amount" },
+];
+
 export function CalendarExpenseTable({
   expenses,
   onExpenseUpdated,
 }: CalendarExpenseTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [sort, setSort] = useState<SortState | null>(null);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const totalPages = Math.ceil(expenses.length / ITEMS_PER_PAGE);
+  // Cycle a column through asc -> desc -> cleared on each click.
+  const handleSort = (column: SortColumn) => {
+    setCurrentPage(1);
+    setSort((prev) => {
+      if (!prev || prev.column !== column) {
+        return { column, direction: "asc" };
+      }
+      if (prev.direction === "asc") {
+        return { column, direction: "desc" };
+      }
+      return null;
+    });
+  };
+
+  const compare = (a: Expense, b: Expense, column: SortColumn): number => {
+    switch (column) {
+      case "date":
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      case "amount":
+        return Number(a.amount) - Number(b.amount);
+      case "description":
+      case "category":
+        return a[column].localeCompare(b[column]);
+    }
+  };
+
+  const sortedExpenses = sort
+    ? [...expenses].sort((a, b) => {
+        const result = compare(a, b, sort.column);
+        return sort.direction === "asc" ? result : -result;
+      })
+    : expenses;
+
+  const totalPages = Math.ceil(sortedExpenses.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentExpenses = expenses.slice(startIndex, endIndex);
+  const currentExpenses = sortedExpenses.slice(startIndex, endIndex);
 
   const handleEdit = (expense: Expense) => {
     setEditingExpense(expense);
@@ -90,6 +139,33 @@ export function CalendarExpenseTable({
     borderBottom: `2px solid ${COLORS.border}`,
   };
 
+  const sortableThStyle: React.CSSProperties = {
+    ...thStyle,
+    cursor: "pointer",
+    userSelect: "none",
+  };
+
+  const sortLabelStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.35rem",
+  };
+
+  const renderSortIndicator = (column: SortColumn) => {
+    const active = sort?.column === column;
+    const arrow = !active ? "↕" : sort?.direction === "asc" ? "↑" : "↓";
+    return (
+      <span
+        style={{
+          fontSize: "0.75rem",
+          color: active ? COLORS.primary.p05 : COLORS.text.light,
+        }}
+      >
+        {arrow}
+      </span>
+    );
+  };
+
   const tdStyle: React.CSSProperties = {
     padding: "0.75rem",
     borderBottom: `1px solid ${COLORS.border}`,
@@ -122,10 +198,25 @@ export function CalendarExpenseTable({
       <table style={tableStyle}>
         <thead style={theadStyle}>
           <tr>
-            <th style={thStyle}>Date</th>
-            <th style={thStyle}>Description</th>
-            <th style={thStyle}>Category</th>
-            <th style={thStyle}>Amount</th>
+            {SORTABLE_COLUMNS.map((col) => (
+              <th
+                key={col.key}
+                style={sortableThStyle}
+                onClick={() => handleSort(col.key)}
+                aria-sort={
+                  sort?.column === col.key
+                    ? sort.direction === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                }
+              >
+                <span style={sortLabelStyle}>
+                  {col.label}
+                  {renderSortIndicator(col.key)}
+                </span>
+              </th>
+            ))}
             <th style={{ ...thStyle, textAlign: "center" }}>Actions</th>
           </tr>
         </thead>

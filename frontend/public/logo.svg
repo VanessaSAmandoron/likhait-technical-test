@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Clipboard frame -->
+  <rect x="48" y="56" width="336" height="424" rx="36" fill="#23418c"/>
+  <rect x="80" y="104" width="272" height="344" rx="16" fill="#f7f5f5" stroke="#23418c" stroke-width="8"/>
+
+  <!-- Clip -->
+  <rect x="140" y="28" width="152" height="72" rx="24" fill="#be4b0f"/>
+  <rect x="164" y="44" width="104" height="40" rx="14" fill="#fa6414"/>
+
+  <!-- Pie chart -->
+  <g stroke="#23418c" stroke-width="8" stroke-linejoin="round">
+    <path d="M168 148 A56 56 0 0 1 224 204 L168 204 Z" fill="#00963c"/>
+    <path d="M168 148 A56 56 0 0 0 118 232 L168 204 Z" fill="#ffb91e"/>
+    <path d="M118 232 A56 56 0 0 0 224 204 L168 204 Z" fill="#dc1e32"/>
+  </g>
+
+  <!-- Line items -->
+  <g fill="#aac8ff">
+    <rect x="256" y="156" width="72" height="18" rx="9"/>
+    <rect x="256" y="196" width="72" height="18" rx="9"/>
+    <rect x="104" y="288" width="180" height="20" rx="10"/>
+    <rect x="104" y="332" width="150" height="20" rx="10"/>
+    <rect x="104" y="376" width="120" height="20" rx="10"/>
+  </g>
+
+  <!-- Coin stack -->
+  <g stroke="#23418c" stroke-width="8">
+    <ellipse cx="356" cy="452" rx="108" ry="30" fill="#ffb91e"/>
+    <ellipse cx="356" cy="424" rx="108" ry="30" fill="#fa6414"/>
+    <ellipse cx="356" cy="396" rx="108" ry="30" fill="#ffb91e"/>
+    <circle cx="356" cy="312" r="80" fill="#fa6414"/>
+    <circle cx="356" cy="312" r="52" fill="#ffb91e"/>
+  </g>
+  <text x="356" y="342" text-anchor="middle" font-size="72" font-weight="700" fill="#23418c" font-family="Inter, system-ui, sans-serif">$</text>
+</svg>

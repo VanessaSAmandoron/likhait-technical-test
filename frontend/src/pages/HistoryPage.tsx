@@ -5,6 +5,7 @@ import YearNavigation from "../components/YearNavigation";
 import { MonthNavigation } from "../components/MonthNavigation";
 import CategoryBreakdown from "../components/CategoryBreakdown";
 import { CalendarExpenseTable } from "../components/CalendarExpenseTable";
+import { TransactionChart } from "../components/TransactionChart";
 import { ExpenseForm } from "../components/ExpenseForm";
 import { Modal, Button } from "../vibes";
 import { COLORS } from "../constants/colors";
@@ -169,6 +170,13 @@ const HistoryPage: React.FC = () => {
               total={total}
               totalCount={totalCount}
             />
+            <div style={{ marginTop: "32px" }}>
+              <TransactionChart
+                expenses={expenses}
+                year={selectedYear}
+                month={selectedMonth}
+              />
+            </div>
             <div style={{ marginTop: "32px" }}>
               <CalendarExpenseTable
                 expenses={expenses}
