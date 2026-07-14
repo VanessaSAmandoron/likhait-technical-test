@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { getExpenses, createExpense } from "../services/api";
+import {
+  getExpenses,
+  createExpense,
+  fetchCategories,
+  Category,
+} from "../services/api";
 import { Expense, ExpenseFormData } from "../types";
 import YearNavigation from "../components/YearNavigation";
 import { MonthNavigation } from "../components/MonthNavigation";
@@ -11,6 +16,7 @@ import { COLORS } from "../constants/colors";
 
 const HistoryPage: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -40,9 +46,10 @@ const HistoryPage: React.FC = () => {
     window.history.pushState({}, "", newURL);
   };
 
-  // Initialize URL params if not present
+  // Initialize URL params and load categories on mount
   useEffect(() => {
     updateURL(selectedYear, selectedMonth);
+    loadCategories();
   }, []);
 
   useEffect(() => {
@@ -58,6 +65,15 @@ const HistoryPage: React.FC = () => {
       console.error("Error fetching expenses:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const data = await fetchCategories();
+      setCategoryList(data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
     }
   };
 
@@ -82,18 +98,37 @@ const HistoryPage: React.FC = () => {
     }
   };
 
+  // Map category name -> custom emoji for display
+  const emojiByCategory = categoryList.reduce(
+    (acc, category) => {
+      if (category.emoji) {
+        acc[category.name] = category.emoji;
+      }
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
   // Calculate category breakdown
   const categoryData = expenses.reduce(
     (acc, expense) => {
       const category = expense.category || "Uncategorized";
       if (!acc[category]) {
-        acc[category] = { category, amount: 0, count: 0 };
+        acc[category] = {
+          category,
+          amount: 0,
+          count: 0,
+          emoji: emojiByCategory[category],
+        };
       }
       acc[category].amount += Number(expense.amount);
       acc[category].count += 1;
       return acc;
     },
-    {} as Record<string, { category: string; amount: number; count: number }>,
+    {} as Record<
+      string,
+      { category: string; amount: number; count: number; emoji?: string }
+    >,
   );
 
   const categories = Object.values(categoryData).sort(
@@ -187,6 +222,7 @@ const HistoryPage: React.FC = () => {
         <ExpenseForm
           onSubmit={handleAddExpense}
           onCancel={() => setIsModalOpen(false)}
+          categories={categoryList.length > 0 ? categoryList : undefined}
         />
       </Modal>
     </div>

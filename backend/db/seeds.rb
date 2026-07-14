@@ -3,23 +3,23 @@ puts "Clearing existing data..."
 Expense.destroy_all
 Category.destroy_all
 
-# Create categories
+# Create categories (name => emoji), mirroring the frontend CATEGORY_EMOJIS map
 puts "Creating categories..."
-categories = [
-  'Food',
-  'Transportation',
-  'Shopping',
-  'Entertainment',
-  'Bills',
-  'Healthcare',
-  'Education',
-  'Travel',
-  'Personal',
-  'Other'
-]
+category_emojis = {
+  'Food' => '🍔',
+  'Transportation' => '🚗',
+  'Shopping' => '🛍️',
+  'Entertainment' => '🎬',
+  'Bills' => '📄',
+  'Healthcare' => '🏥',
+  'Education' => '📚',
+  'Travel' => '✈️',
+  'Personal' => '🧴',
+  'Other' => '📦'
+}
 
-created_categories = categories.map do |cat_name|
-  Category.create!(name: cat_name)
+created_categories = category_emojis.map do |cat_name, emoji|
+  Category.create!(name: cat_name, emoji: emoji)
 end
 
 puts "Created #{created_categories.count} categories"

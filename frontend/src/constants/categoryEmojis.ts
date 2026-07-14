@@ -14,6 +14,29 @@ export const CATEGORY_EMOJIS: Record<string, string> = {
   Other: "📦",
 };
 
+export const EMOJI_OPTIONS = [
+  "🍔",
+  "🚗",
+  "🎬",
+  "🛍️",
+  "📄",
+  "🏥",
+  "📚",
+  "✈️",
+  "🏠",
+  "💡",
+  "💰",
+  "🎁",
+  "🐶",
+  "☕",
+  "🏋️",
+  "🎮",
+  "🛒",
+  "📦",
+] as const;
+
+export const DEFAULT_CATEGORY_EMOJI = "📦";
+
 export function getCategoryEmoji(category: string): string {
-  return CATEGORY_EMOJIS[category] || "📦";
+  return CATEGORY_EMOJIS[category] || DEFAULT_CATEGORY_EMOJI;
 }
