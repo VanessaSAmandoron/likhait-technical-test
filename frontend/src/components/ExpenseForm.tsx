@@ -5,21 +5,33 @@
 import React from "react";
 import { ExpenseFormData } from "../types";
 import { EXPENSE_CATEGORIES } from "../constants/categories";
+import { getCategoryEmoji } from "../constants/categoryEmojis";
 import { TextField, SelectBox, Button } from "../vibes";
 import { useExpenseForm } from "../hooks/useExpenseForm";
+
+interface CategoryOption {
+  name: string;
+  emoji?: string | null;
+}
 
 interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
   onSubmit: (data: ExpenseFormData) => Promise<void>;
   onCancel?: () => void;
   submitLabel?: string;
+  categories?: readonly CategoryOption[];
 }
+
+const DEFAULT_CATEGORIES: readonly CategoryOption[] = EXPENSE_CATEGORIES.map(
+  (name) => ({ name }),
+);
 
 export function ExpenseForm({
   initialData,
   onSubmit,
   onCancel,
   submitLabel = "Add Expense",
+  categories = DEFAULT_CATEGORIES,
 }: ExpenseFormProps) {
   const { formData, errors, isSubmitting, handleChange, handleSubmit } =
     useExpenseForm({
@@ -39,9 +51,9 @@ export function ExpenseForm({
     marginTop: "0.5rem",
   };
 
-  const categoryOptions = EXPENSE_CATEGORIES.map((category) => ({
-    value: category,
-    label: category,
+  const categoryOptions = categories.map((category) => ({
+    value: category.name,
+    label: `${category.emoji || getCategoryEmoji(category.name)} ${category.name}`,
   }));
 
   return (

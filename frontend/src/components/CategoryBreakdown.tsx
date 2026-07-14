@@ -6,6 +6,7 @@ interface CategoryData {
   category: string;
   amount: number;
   count: number;
+  emoji?: string;
 }
 
 interface CategoryBreakdownProps {
@@ -200,7 +201,7 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
             >
               <div style={itemInfoStyle}>
                 <span style={itemIconStyle}>
-                  {CATEGORY_EMOJIS[category.category] || "📊"}
+                  {category.emoji || CATEGORY_EMOJIS[category.category] || "📊"}
                 </span>
                 <div style={itemDetailsStyle}>
                   <div style={itemNameStyle}>{category.category}</div>
